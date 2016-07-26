@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_mypost"
+            android:icon="@drawable/ic_menu_myposts"
+            android:title="@string/menu_myposts" />
+        <item
+            android:id="@+id/nav_notifications"
+            android:icon="@drawable/ic_menu_notifications"
+            android:title="@string/menu_notifications" />
+        <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_menu_chat"
+            android:title="@string/menu_chat" />
+        <item
+            android:id="@+id/nav_invite"
+            android:icon="@drawable/ic_menu_invite"
+            android:title="@string/menu_invite" />
+    </group>
+
+    <item android:title="@string/menu_general_settings">
+        <menu>
+            <item
+                android:id="@+id/nav_config"
+                android:icon="@drawable/ic_menu_config"
+                android:title="@string/menu_config" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_about"
+                android:title="@string/menu_about" />
+            <item
+                android:id="@+id/nav_signout"
+                android:icon="@drawable/ic_menu_signout"
+                android:title="@string/menu_signout" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "177468884998",
+    "firebase_url": "https://wetrade-f7d03.firebaseio.com",
+    "project_id": "wetrade-f7d03",
+    "storage_bucket": "wetrade-f7d03.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177468884998:android:b86bbe351cd74d35",
+        "android_client_info": {
+          "package_name": "co.com.firefly.wetrade"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177468884998-rpbrab790fda7nbdsrrm6k1qis5qn626.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.com.firefly.wetrade",
+            "certificate_hash": "59279568DCC3876FA318ABD6C0FD9003444FA203"
+          }
+        },
+        {
+          "client_id": "177468884998-9rf136rlehrcfbv57n20m8stkv12suie.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.com.firefly.wetrade",
+            "certificate_hash": "D1A0B7E7661A859297A6DC4FA2CC08104D589317"
+          }
+        },
+        {
+          "client_id": "177468884998-lleardbmqi4hbpcpg8prifa40ppnt75f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNZ1g8lx1HbPADSdhv5Xnp1gPLWk-tixo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
