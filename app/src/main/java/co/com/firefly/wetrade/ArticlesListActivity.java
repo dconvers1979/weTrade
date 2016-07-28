@@ -33,6 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -41,7 +43,6 @@ import java.io.ByteArrayOutputStream;
 
 import co.com.firefly.wetrade.model.WeTradeArticle;
 import co.com.firefly.wetrade.model.WeTradeTopics;
-import co.com.firefly.wetrade.util.WeTradeConfig;
 import co.com.firefly.wetrade.viewholder.ArticleViewHolder;
 
 public class ArticlesListActivity extends AppCompatActivity {

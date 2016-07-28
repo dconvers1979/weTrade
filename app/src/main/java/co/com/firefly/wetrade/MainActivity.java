@@ -3,10 +3,8 @@ package co.com.firefly.wetrade;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -19,15 +17,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.appinvite.AppInviteInvitation;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,12 +36,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import co.com.firefly.wetrade.model.WeTradeArticle;
 import co.com.firefly.wetrade.model.WeTradeTopics;
 import co.com.firefly.wetrade.util.WeTradeConfig;
 import co.com.firefly.wetrade.viewholder.TopicViewHolder;
@@ -58,6 +60,14 @@ public class MainActivity extends AppCompatActivity
     private FirebaseRecyclerAdapter<WeTradeTopics, TopicViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private StaggeredGridLayoutManager mManager;
+    private TextView notificationCount;
+    private String myTopic;
+
+    private Spinner topicSpinner;
+
+    private List<String> spinnerData = new ArrayList<String>();
+
+    private static final String FRIENDLY_ENGAGE_TOPIC = "friendly_engage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FirebaseMessaging.getInstance().subscribeToTopic(FRIENDLY_ENGAGE_TOPIC);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -96,8 +108,6 @@ public class MainActivity extends AppCompatActivity
                     newEquityTopic(item);
                 }
 
-
-
             }
         });
 
@@ -114,13 +124,14 @@ public class MainActivity extends AppCompatActivity
 
         TextView userLoggedName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_logged_name);
         ImageView userLoggedPhoto = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_logged_photo);
+        notificationCount = (TextView) navigationView.getMenu().findItem(R.id.nav_notifications).getActionView().findViewById(R.id.actionbar_notifcation_textview);
 
         if(WeTradeConfig.getInstance().getAccount()!=null){
             userLoggedName.setText(WeTradeConfig.getInstance().getAccount().getDisplayName());
             userLoggedEmail.setText(WeTradeConfig.getInstance().getAccount().getEmail());
 
             if(WeTradeConfig.getInstance().getAccount().getPhotoUrl()!=null){
-                userLoggedPhoto.setImageURI(WeTradeConfig.getInstance().getAccount().getPhotoUrl().normalizeScheme());
+                userLoggedPhoto.setImageURI(WeTradeConfig.getInstance().getAccount().getPhotoUrl());
             }
 
         }
@@ -140,9 +151,9 @@ public class MainActivity extends AppCompatActivity
         mRecycler.setLayoutManager(mManager);
 
         // Set up FirebaseRecyclerAdapter with the Query
-        Query postsQuery = getQuery(mDatabase);
+        Query topicsQuery = getQuery(mDatabase);
         mAdapter = new FirebaseRecyclerAdapter<WeTradeTopics, TopicViewHolder>(WeTradeTopics.class, R.layout.item_topics,
-                TopicViewHolder.class, postsQuery) {
+                TopicViewHolder.class, topicsQuery) {
 
             @Override
             protected void populateViewHolder(final TopicViewHolder viewHolder, final WeTradeTopics model, final int position) {
@@ -160,7 +171,11 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
+                spinnerData.add(model.getTopicName());
+
                 viewHolder.bindToTopic(model);
+
+                myTopic = model.getTopicName();
 
             }
         };
@@ -168,6 +183,63 @@ public class MainActivity extends AppCompatActivity
 
         // Initialize Firebase Measurement.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+    }
+
+    public void myArticlesDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setView(R.layout.menu_topics);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+        topicSpinner = (Spinner) dialog.findViewById(R.id.topics_spinner);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinnerData);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        topicSpinner.setAdapter(adapter);
+
+        topicSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.this.myTopic = parent.getItemAtPosition(position).toString();
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        Button search = (Button) dialog.findViewById(R.id.topics_spinner_ok);
+        Button cancel = (Button) dialog.findViewById(R.id.topics_spinner_cancel);
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Intent intent = new Intent(MainActivity.this, MyArticlesActivity.class);
+                intent.putExtra(MyArticlesActivity.TOPIC_KEY,MainActivity.this.myTopic);
+
+                startActivity(intent);
+
+                dialog.dismiss();
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
     }
 
@@ -200,6 +272,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -225,7 +298,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_mypost) {
-            // Handle the camera action
+
+            myArticlesDialog();
+
         } else if (id == R.id.nav_notifications) {
 
         } else if (id == R.id.nav_chat) {
@@ -303,11 +378,12 @@ public class MainActivity extends AppCompatActivity
     public void writeNewTopic(WeTradeTopics topic) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
-        String key = mDatabase.child("topics").push().getKey();
+        //String key = mDatabase.child("topics").push().getKey(); TODO
         Map<String, Object> equityValues = topic.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/topics/" + key, equityValues);
+        //childUpdates.put("/topics/" + key, equityValues); TODO
+        childUpdates.put("/topics/" + topic.getTopicName(), equityValues); // TODO
 
         mDatabase.updateChildren(childUpdates);
     }
@@ -345,4 +421,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 }

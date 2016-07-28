@@ -39,7 +39,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/title_activity_articles_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MyArticlesActivity" />
+        <activity android:name=".MyArticlesActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
 
         <service
             android:name=".firebase.MyFirebaseMessagingService">

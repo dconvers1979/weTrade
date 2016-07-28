@@ -18,6 +18,7 @@
     <string name="title_activity_articles_list">ArticlesListActivity</string>
     <string name="banner_ad_unit_id">ca-app-pub-8615192906080517/5153080384</string>
     <string name="new_article">Crear</string>
+    <string name="open_my_articles">Consultar</string>
     <string name="cancel">Cancelar</string>
 
 
