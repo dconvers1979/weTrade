@@ -124,7 +124,7 @@ public class ArticlesListActivity extends AppCompatActivity {
                     }
                 });
 
-                viewHolder.bindToArticle(model);
+                viewHolder.bindToArticle(model, postKey, getUid(), topicKey);
 
             }
         };

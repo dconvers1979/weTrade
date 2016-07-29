@@ -12,10 +12,10 @@
             android:icon="@drawable/ic_menu_notifications"
             app:actionLayout="@layout/menu_badge"
             android:title="@string/menu_notifications" />
-        <item
+        <!--item
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_menu_chat"
-            android:title="@string/menu_chat" />
+            android:title="@string/menu_chat" /-->
         <item
             android:id="@+id/nav_invite"
             android:icon="@drawable/ic_menu_invite"

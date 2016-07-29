@@ -1,5 +1,6 @@
 package co.com.firefly.wetrade;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -8,43 +9,47 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import co.com.firefly.wetrade.model.WeTradeArticle;
-import co.com.firefly.wetrade.viewholder.MyArticleViewHolder;
+import java.util.HashMap;
 
-public class MyArticlesActivity extends AppCompatActivity {
+import co.com.firefly.wetrade.viewholder.ArticleViewHolder;
+import co.com.firefly.wetrade.viewholder.MyArticlesChatViewHolder;
 
-    public static final String TOPIC_KEY = "topicKey";
+public class MyArticlesChatActivity extends AppCompatActivity {
+
+    public static final String MESSAGES_CHILD = "messages";
+    public static final String ARTICLE_UID = "articleKEY";
+    public static final String TOPIC_KEY = "TopicKey";
+    private String articleKey;
+    private String buyerUID;
     private String topicKey;
-
-    private AdView mAdView;
 
     public DatabaseReference mDatabase;
 
-    private FirebaseRecyclerAdapter<WeTradeArticle, MyArticleViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<Object, MyArticlesChatViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private StaggeredGridLayoutManager mManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_articles);
+        setContentView(R.layout.activity_my_articles_chat);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            this.articleKey = (String) extras.getSerializable(ARTICLE_UID);
             this.topicKey = (String) extras.getSerializable(TOPIC_KEY);
+            //equityNameDetail.setText(this.equity.getEquity()+" - "+this.equity.getValue());
         }else{
             finish();
         }
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mRecycler = (RecyclerView) findViewById(R.id.articles_list);
+        mRecycler = (RecyclerView) findViewById(R.id.my_articles_chat_list);
         mRecycler.setHasFixedSize(true);
 
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
@@ -60,11 +65,11 @@ public class MyArticlesActivity extends AppCompatActivity {
 
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(mDatabase);
-        mAdapter = new FirebaseRecyclerAdapter<WeTradeArticle, MyArticleViewHolder>(WeTradeArticle.class, R.layout.item_articles,
-                MyArticleViewHolder.class, postsQuery) {
+        mAdapter = new FirebaseRecyclerAdapter<Object, MyArticlesChatViewHolder>(Object.class, R.layout.item_my_articles_chat,
+                MyArticlesChatViewHolder.class, postsQuery) {
 
             @Override
-            protected void populateViewHolder(final MyArticleViewHolder viewHolder, final WeTradeArticle model, final int position) {
+            protected void populateViewHolder(final MyArticlesChatViewHolder viewHolder, final Object model, final int position) {
                 final DatabaseReference postRef = getRef(position);
 
                 // Set click listener for the whole post view
@@ -72,23 +77,22 @@ public class MyArticlesActivity extends AppCompatActivity {
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Intent intent = new Intent(MainActivity.this, ArticlesListActivity.class);
-                        //intent.putExtra(ArticlesListActivity.TOPIC_NAME, model);
-                        //startActivity(intent); TODO go to new article
+                        Intent intent = new Intent(MyArticlesChatActivity.this, ChatActivity.class);
+
+                        intent.putExtra(ChatActivity.ARTICLE_UID,articleKey);
+                        intent.putExtra(ChatActivity.BUYER_UID,postKey);
+                        intent.putExtra(ChatActivity.TOPIC_KEY,topicKey);
+
+                        MyArticlesChatActivity.this.startActivity(intent);
 
                     }
                 });
 
-                viewHolder.bindToArticle(model, postKey, getUid(), topicKey);
+                viewHolder.bindToArticleChat(postKey);
 
             }
         };
         mRecycler.setAdapter(mAdapter);
-
-        mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-
     }
 
     public String getUid() {
@@ -99,12 +103,10 @@ public class MyArticlesActivity extends AppCompatActivity {
         // [START recent_posts_query]
         // Last 100 posts, these are automatically the 100 most recent
         // due to sorting by push() keys
-        Query recentPostsQuery = databaseReference.child("topics").child(topicKey).child("articles").orderByChild("sellerId").equalTo(getUid());
+        Query recentPostsQuery = databaseReference.child("topics").child(topicKey).child("articles").child(articleKey).child("messages");
 
         // [END recent_posts_query]
 
         return recentPostsQuery;
     }
-
-
 }

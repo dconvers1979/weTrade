@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,14 +17,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import co.com.firefly.wetrade.ChatActivity;
+import co.com.firefly.wetrade.MyArticlesChatActivity;
 import co.com.firefly.wetrade.R;
 import co.com.firefly.wetrade.model.WeTradeArticle;
-import co.com.firefly.wetrade.util.WeTradeConfig;
 
 /**
  * Created by toshiba on 25/07/2016.
  */
-public class ArticleViewHolder extends RecyclerView.ViewHolder{
+public class MyArticleViewHolder extends RecyclerView.ViewHolder{
 
     private WeTradeArticle article;
     private TextView name;
@@ -37,9 +36,8 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
     private Toolbar toolbar;
     private View view;
 
-    public ArticleViewHolder(View itemView){
+    public MyArticleViewHolder(View itemView){
         super(itemView);
-        view = itemView;
         name = (TextView) itemView.findViewById(R.id.article_name);
         price = (TextView) itemView.findViewById(R.id.article_price);
         currency = (TextView) itemView.findViewById(R.id.article_currency);
@@ -47,6 +45,7 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
         sendingCharges = (TextView) itemView.findViewById(R.id.article_sending_charges);
         articleImage = (ImageView) itemView.findViewById(R.id.article_image);
         toolbar = (Toolbar) itemView.findViewById(R.id.article_menu);
+        view = itemView;
     }
 
     public void bindToArticle(final WeTradeArticle article, final String articleKey, final String buyerId, final String topicKey) {
@@ -55,15 +54,15 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
         currency.setText(article.getCurrency());
         description.setText(article.getDescription());
         sendingCharges.setText(article.getSendingCharges());
+
         toolbar.inflateMenu(R.menu.article_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick(MenuItem item){
-                Intent intent = new Intent(view.getContext(), ChatActivity.class);
+                Intent intent = new Intent(view.getContext(), MyArticlesChatActivity.class);
 
-                intent.putExtra(ChatActivity.ARTICLE_UID,articleKey);
-                intent.putExtra(ChatActivity.BUYER_UID,buyerId);
-                intent.putExtra(ChatActivity.TOPIC_KEY,topicKey);
+                intent.putExtra(MyArticlesChatActivity.ARTICLE_UID,articleKey);
+                intent.putExtra(MyArticlesChatActivity.TOPIC_KEY,topicKey);
 
                 view.getContext().startActivity(intent);
 

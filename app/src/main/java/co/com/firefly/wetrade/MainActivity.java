@@ -303,9 +303,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_notifications) {
 
-        } else if (id == R.id.nav_chat) {
-            startActivity(new Intent(this, ChatActivity.class));
-        } else if (id == R.id.nav_config) {
+        } /*else if (id == R.id.nav_chat) {
+            startActivity(new Intent(this, MyChatsActivity.class));
+        }*/ else if (id == R.id.nav_config) {
 
         } else if (id == R.id.nav_invite) {
             sendInvitation();

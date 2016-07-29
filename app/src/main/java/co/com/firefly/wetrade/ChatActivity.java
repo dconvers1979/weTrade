@@ -36,11 +36,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.com.firefly.wetrade.model.WeTradeChatMessage;
+import co.com.firefly.wetrade.model.WeTradeTopics;
 
 public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivity";
     public static final String MESSAGES_CHILD = "messages";
+    public static final String BUYER_UID = "buyerUID";
+    public static final String ARTICLE_UID = "articleKEY";
+    public static final String TOPIC_KEY = "TopicKey";
+
+
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 60;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
@@ -60,11 +66,24 @@ public class ChatActivity extends AppCompatActivity {
     private EditText mMessageEditText;
     private AdView mAdView;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private String articleKey;
+    private String buyerUID;
+    private String topicKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            this.articleKey = (String) extras.getSerializable(ARTICLE_UID);
+            this.buyerUID = (String) extras.getSerializable(BUYER_UID);
+            this.topicKey = (String) extras.getSerializable(TOPIC_KEY);
+            //equityNameDetail.setText(this.equity.getEquity()+" - "+this.equity.getValue());
+        }else{
+            finish();
+        }
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUsername = ANONYMOUS;
@@ -85,11 +104,6 @@ public class ChatActivity extends AppCompatActivity {
 
         }
 
-        /*mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity *///, this /* OnConnectionFailedListener */)
-                //.addApi(Auth.GOOGLE_SIGN_IN_API)
-                //.build(); TODO borrar
-
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -100,7 +114,7 @@ public class ChatActivity extends AppCompatActivity {
                 WeTradeChatMessage.class,
                 R.layout.item_message,
                 MessageViewHolder.class,
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD)) {
+                mFirebaseDatabaseReference.child("topics").child(topicKey).child("articles").child(articleKey).child(MESSAGES_CHILD).child(buyerUID)) {
 
             @Override
             protected void populateViewHolder(MessageViewHolder viewHolder, WeTradeChatMessage friendlyMessage, int position) {
@@ -193,7 +207,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 WeTradeChatMessage friendlyMessage = new WeTradeChatMessage(mMessageEditText.getText().toString(), mUsername,
                         mPhotoUrl);
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(friendlyMessage);
+                mFirebaseDatabaseReference.child("topics").child(topicKey).child("articles").child(articleKey).child(MESSAGES_CHILD).child(buyerUID).push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
                 mFirebaseAnalytics.logEvent(MESSAGE_SENT_EVENT, null);
             }
