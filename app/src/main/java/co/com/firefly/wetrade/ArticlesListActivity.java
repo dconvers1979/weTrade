@@ -1,5 +1,6 @@
 package co.com.firefly.wetrade;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -42,7 +43,9 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 
 import co.com.firefly.wetrade.model.WeTradeArticle;
+import co.com.firefly.wetrade.model.WeTradeChatMessage;
 import co.com.firefly.wetrade.model.WeTradeTopics;
+import co.com.firefly.wetrade.util.WeTradeMessageHelper;
 import co.com.firefly.wetrade.viewholder.ArticleViewHolder;
 
 public class ArticlesListActivity extends AppCompatActivity {
@@ -134,6 +137,8 @@ public class ArticlesListActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        WeTradeMessageHelper.getInstance().setup(this);
+
     }
 
     public void newArticleDialog(){
@@ -172,15 +177,60 @@ public class ArticlesListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
-
                 newArticle = new WeTradeArticle();
-                newArticle.setName(name.getText().toString());
-                newArticle.setCurrency(currency.getText().toString());
-                newArticle.setDescription(description.getText().toString());
-                newArticle.setPrice(price.getText().toString());
-                newArticle.setSendingCharges(charges.getText().toString());
+                if(name.getText()!=null && !name.getText().toString().equals("")) {
+                    newArticle.setName(name.getText().toString());
+                }else{
+                    name.setError(getResources().getString(R.string.mandatory_field));
+                }
+                if(currency.getText()!=null && !currency.getText().toString().equals("")) {
+                    newArticle.setCurrency(currency.getText().toString());
+                }else{
+                    currency.setError(getResources().getString(R.string.mandatory_field));
+                }
+                if(description.getText()!=null && !description.getText().toString().equals("")) {
+                    newArticle.setDescription(description.getText().toString());
+                }else{
+                    description.setError(getResources().getString(R.string.mandatory_field));
+                }
+                if(price.getText()!=null && !price.getText().toString().equals("")) {
+                    newArticle.setPrice(price.getText().toString());
+                }else{
+                    price.setError(getResources().getString(R.string.mandatory_field));
+                }
+                if(charges.getText()!=null && !charges.getText().toString().equals("")) {
+                    newArticle.setSendingCharges(charges.getText().toString());
+                }else{
+                    charges.setError(getResources().getString(R.string.mandatory_field));
+                }
+
                 newArticle.setSellerId(getUid());
+
+                AlertDialog myQuittingDialogBox =new AlertDialog.Builder(ArticlesListActivity.this)
+                        //set message, title, and icon
+                        .setTitle(getResources().getString(R.string.buy_notification_title))
+                        .setMessage(getResources().getString(R.string.buy_notification_message))
+                        .setIcon(R.drawable.ic_buy)
+
+                        .setPositiveButton(getResources().getString(R.string.buy_notification_buy), new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                WeTradeMessageHelper.getInstance().buyNotification();
+                                dialog.dismiss();
+                            }
+
+                        })
+
+                        .setNegativeButton(getResources().getString(R.string.buy_notification_continue), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                dialog.dismiss();
+
+                            }
+                        })
+                        .create();
+
+                myQuittingDialogBox.show();
 
                 createNewArticle(FirebaseDatabase.getInstance().getReference().child("topics").child(topicKey));
 
@@ -307,6 +357,13 @@ public class ArticlesListActivity extends AppCompatActivity {
             }
         });
     }
-    // [END post_stars_transaction]
+
+    // We're being destroyed. It's important to dispose of the helper here!
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        WeTradeMessageHelper.getInstance().onDestroy();
+    }
 
 }

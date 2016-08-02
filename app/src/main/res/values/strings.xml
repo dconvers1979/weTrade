@@ -20,6 +20,11 @@
     <string name="new_article">Crear</string>
     <string name="open_my_articles">Consultar</string>
     <string name="cancel">Cancelar</string>
+    <string name="mandatory_field">Campo obligatorio</string>
+    <string name="buy_notification_title">NOTIFICACION</string>
+    <string name="buy_notification_message">Desea comprar el servicio de notificaciones para este mensaje por $2.000 pesos ?</string>
+    <string name="buy_notification_buy">Comprar</string>
+    <string name="buy_notification_continue">Seguir sin comprar</string>
 
 
     <string name="new_article_name">Nombre artículo</string>
