@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import co.com.firefly.wetrade.model.WeTradeArticle;
+import co.com.firefly.wetrade.util.WeTradeConfig;
 import co.com.firefly.wetrade.viewholder.MyArticleViewHolder;
 
 public class MyArticlesActivity extends AppCompatActivity {
@@ -53,7 +54,7 @@ public class MyArticlesActivity extends AppCompatActivity {
         mRecycler.setItemAnimator(itemAnimator);
 
         // Set up Layout Manager, reverse layout
-        mManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mManager = new StaggeredGridLayoutManager(WeTradeConfig.getInstance().getSpanCount(),StaggeredGridLayoutManager.VERTICAL);
         mManager.setReverseLayout(false);
         //mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);

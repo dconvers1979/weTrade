@@ -15,6 +15,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import java.util.HashMap;
 import java.util.Map;
 
+import co.com.firefly.wetrade.model.WeTradeArticle;
+
 /**
  * Created by toshiba on 01/08/2016.
  */
@@ -45,6 +47,7 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
     // Provides purchase notification while this app is running
     IabBroadcastReceiver mBroadcastReceiver;
 
+    private WeTradeArticle weTradeArticle;
 
     private static WeTradeMessageHelper ourInstance = new WeTradeMessageHelper();
 
@@ -78,6 +81,8 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
 
         fetchConfig();
+
+        //loadData();
 
     }
 
@@ -145,11 +150,11 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
 
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
                 Log.d(TAG, "Setup successful. Querying inventory.");
-                try {
+                /*try { TODO revisar si es necesario por el modelo de compra usado.
                     mHelper.queryInventoryAsync(mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     complain("Error querying inventory. Another async operation in progress.");
-                }
+                }*/
             }
         });
 
@@ -208,7 +213,9 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
         }
     }
 
-    public void buyNotification() {
+    public void buyNotification(WeTradeArticle weTradeArticle) {
+
+        this.weTradeArticle = weTradeArticle;
         Log.d(TAG, "Buy gas button clicked.");
 
         // launch the gas purchase UI flow.
@@ -344,6 +351,8 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
 
             Log.d(TAG, "Purchase successful.");
 
+            WeTradeMessageHelper.this.storePurchaseFirebase();
+
             if (purchase.getSku().equals(SKU_NOTIFICATION)) {
                 // bought 1/4 tank of gas. So consume it.
                 Log.d(TAG, "Purchase is gas. Starting gas consumption.");
@@ -375,13 +384,13 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
                 // game world's logic, which in our case means filling the gas tank a bit
                 Log.d(TAG, "Consumption successful. Provisioning.");
                 mTank = mTank == NOTIFICATIONS_MAX ? NOTIFICATIONS_MAX : mTank + 1;
-                // TODO saveData();
+                //saveData();
                 alert("You filled 1/4 tank. Your tank is now " + String.valueOf(mTank) + "/4 full!");
             }
             else {
                 complain("Error while consuming: " + result);
             }
-            // TODO updateUi();
+            //updateUi();
             setWaitScreen(false);
             Log.d(TAG, "End consumption flow.");
         }
@@ -445,27 +454,17 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
         bld.setMessage(message);
         bld.setNeutralButton("OK", null);
         Log.d(TAG, "Showing alert dialog: " + message);
+        registerComplainFirebase();
         bld.create().show();
+
     }
 
-    //void saveData() {
+    private void storePurchaseFirebase(){
 
-        /*
-         * WARNING: on a real application, we recommend you save data in a secure way to
-         * prevent tampering. For simplicity in this sample, we simply store the data using a
-         * SharedPreferences.
-         */
-
-    /*    SharedPreferences.Editor spe = activity.getPreferences(activity.MODE_PRIVATE).edit();
-        spe.putInt("tank", mTank);
-        spe.apply();
-        Log.d(TAG, "Saved data: tank = " + String.valueOf(mTank));
     }
 
-    void loadData() {
-        SharedPreferences sp = activity.getPreferences(activity.MODE_PRIVATE);
-        mTank = sp.getInt("tank", 2);
-        Log.d(TAG, "Loaded data: tank = " + String.valueOf(mTank));
-    }*/
+    private void registerComplainFirebase(){
+
+    }
 
 }

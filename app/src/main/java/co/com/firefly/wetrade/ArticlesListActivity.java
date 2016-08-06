@@ -45,6 +45,7 @@ import java.io.ByteArrayOutputStream;
 import co.com.firefly.wetrade.model.WeTradeArticle;
 import co.com.firefly.wetrade.model.WeTradeChatMessage;
 import co.com.firefly.wetrade.model.WeTradeTopics;
+import co.com.firefly.wetrade.util.WeTradeConfig;
 import co.com.firefly.wetrade.util.WeTradeMessageHelper;
 import co.com.firefly.wetrade.viewholder.ArticleViewHolder;
 
@@ -57,7 +58,7 @@ public class ArticlesListActivity extends AppCompatActivity {
     private String topicKey;
     private WeTradeArticle newArticle;
     private AdView mAdView;
-    private String filePath;
+    private String filePath = null;
 
     public DatabaseReference mDatabase;
 
@@ -101,7 +102,7 @@ public class ArticlesListActivity extends AppCompatActivity {
         mRecycler.setItemAnimator(itemAnimator);
 
         // Set up Layout Manager, reverse layout
-        mManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mManager = new StaggeredGridLayoutManager(WeTradeConfig.getInstance().getSpanCount(),StaggeredGridLayoutManager.VERTICAL);
         mManager.setReverseLayout(false);
         //mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
@@ -157,6 +158,7 @@ public class ArticlesListActivity extends AppCompatActivity {
         final EditText price = (EditText) dialog.findViewById(R.id.new_article_price);
         final EditText currency = (EditText) dialog.findViewById(R.id.new_article_currency);
         final EditText charges = (EditText) dialog.findViewById(R.id.new_article_charges);
+        final EditText location = (EditText) dialog.findViewById(R.id.new_article_location);
 
         Button create = (Button) dialog.findViewById(R.id.new_article_ok);
         Button cancel = (Button) dialog.findViewById(R.id.new_article_cancel);
@@ -178,35 +180,69 @@ public class ArticlesListActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 newArticle = new WeTradeArticle();
+                if(filePath==null){
+                    AlertDialog imageErrorDialog =new AlertDialog.Builder(ArticlesListActivity.this)
+                            //set message, title, and icon
+                            .setTitle(getResources().getString(R.string.error))
+                            .setMessage(getResources().getString(R.string.image_upload_message))
+                            .setIcon(R.drawable.ic_error)
+
+                            .setPositiveButton(getResources().getString(R.string.image_upload_ok), new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    //your deleting code
+                                    dialog.dismiss();
+                                }
+
+                            })
+                            .create();
+
+                    imageErrorDialog.show();
+                    return;
+                }
+
                 if(name.getText()!=null && !name.getText().toString().equals("")) {
                     newArticle.setName(name.getText().toString());
                 }else{
                     name.setError(getResources().getString(R.string.mandatory_field));
+                    return;
                 }
-                if(currency.getText()!=null && !currency.getText().toString().equals("")) {
-                    newArticle.setCurrency(currency.getText().toString());
-                }else{
-                    currency.setError(getResources().getString(R.string.mandatory_field));
-                }
+
                 if(description.getText()!=null && !description.getText().toString().equals("")) {
                     newArticle.setDescription(description.getText().toString());
                 }else{
                     description.setError(getResources().getString(R.string.mandatory_field));
+                    return;
+                }
+                if(location.getText()!=null && !location.getText().toString().equals("")) {
+                    newArticle.setLocation(location.getText().toString());
+                }else{
+                    location.setError(getResources().getString(R.string.mandatory_field));
+                    return;
+                }
+
+                if(currency.getText()!=null && !currency.getText().toString().equals("")) {
+                    newArticle.setCurrency(currency.getText().toString());
+                }else{
+                    currency.setError(getResources().getString(R.string.mandatory_field));
+                    return;
                 }
                 if(price.getText()!=null && !price.getText().toString().equals("")) {
                     newArticle.setPrice(price.getText().toString());
                 }else{
                     price.setError(getResources().getString(R.string.mandatory_field));
+                    return;
                 }
                 if(charges.getText()!=null && !charges.getText().toString().equals("")) {
                     newArticle.setSendingCharges(charges.getText().toString());
                 }else{
                     charges.setError(getResources().getString(R.string.mandatory_field));
+                    return;
                 }
 
                 newArticle.setSellerId(getUid());
 
-                AlertDialog myQuittingDialogBox =new AlertDialog.Builder(ArticlesListActivity.this)
+                AlertDialog buyNotificationDialog =new AlertDialog.Builder(ArticlesListActivity.this)
                         //set message, title, and icon
                         .setTitle(getResources().getString(R.string.buy_notification_title))
                         .setMessage(getResources().getString(R.string.buy_notification_message))
@@ -215,7 +251,7 @@ public class ArticlesListActivity extends AppCompatActivity {
                         .setPositiveButton(getResources().getString(R.string.buy_notification_buy), new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                WeTradeMessageHelper.getInstance().buyNotification();
+                                WeTradeMessageHelper.getInstance().buyNotification(newArticle);
                                 dialog.dismiss();
                             }
 
@@ -230,7 +266,7 @@ public class ArticlesListActivity extends AppCompatActivity {
                         })
                         .create();
 
-                myQuittingDialogBox.show();
+                buyNotificationDialog.show();
 
                 createNewArticle(FirebaseDatabase.getInstance().getReference().child("topics").child(topicKey));
 
@@ -344,6 +380,7 @@ public class ArticlesListActivity extends AppCompatActivity {
 
                 bitmap.recycle();
                 bitmap = null;
+                filePath = null;
 
                 return Transaction.success(mutableData);
             }

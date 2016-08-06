@@ -14,6 +14,8 @@ public class WeTradeArticle implements Serializable{
     private String description;
     private String sendingCharges;
     private String imageURL;
+    private boolean notificationEnabled;
+    private String location;
 
     public WeTradeArticle(){
 
@@ -73,5 +75,21 @@ public class WeTradeArticle implements Serializable{
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public boolean isNotificationEnabled() {
+        return notificationEnabled;
+    }
+
+    public void setNotificationEnabled(boolean notificationEnabled) {
+        this.notificationEnabled = notificationEnabled;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

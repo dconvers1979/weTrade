@@ -8,8 +8,8 @@ android {
         applicationId "co.com.firefly.wetrade"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 7
-        versionName "1.0.6"
+        versionCode 9
+        versionName "1.0.8"
     }
     buildTypes {
         release {
@@ -41,5 +41,6 @@ dependencies {
     compile 'com.google.firebase:firebase-ads:9.2.1'
     compile 'com.google.android.gms:play-services-appinvite:9.2.1'
 }
+
 
 apply plugin: 'com.google.gms.google-services'

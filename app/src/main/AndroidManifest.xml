@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
-
     <meta-data
         android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version" />
@@ -57,7 +56,20 @@
         </service>
 
         <activity android:name=".ChatActivity" />
-        <activity android:name=".MyArticlesChatActivity"></activity>
+        <activity android:name=".MyArticlesChatActivity" />
+        <activity
+            android:name=".MyChatListActivity"
+            android:label="@string/title_mychat_list"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".MyChatDetailActivity"
+            android:label="@string/title_mychat_detail"
+            android:parentActivityName=".MyChatListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="co.com.firefly.wetrade.MyChatListActivity" />
+        </activity>
     </application>
 
 </manifest>

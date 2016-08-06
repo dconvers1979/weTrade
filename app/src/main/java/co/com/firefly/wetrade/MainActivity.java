@@ -1,5 +1,6 @@
 package co.com.firefly.wetrade;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity
         mRecycler.setItemAnimator(itemAnimator);
 
         // Set up Layout Manager, reverse layout
-        mManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mManager = new StaggeredGridLayoutManager(WeTradeConfig.getInstance().getSpanCount(),StaggeredGridLayoutManager.VERTICAL);
         mManager.setReverseLayout(false);
         mRecycler.setLayoutManager(mManager);
 
@@ -243,6 +244,77 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void myArticlesDialogSuscription(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setView(R.layout.menu_topics);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+        topicSpinner = (Spinner) dialog.findViewById(R.id.topics_spinner);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinnerData);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        topicSpinner.setAdapter(adapter);
+
+        topicSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.this.myTopic = parent.getItemAtPosition(position).toString();
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        Button search = (Button) dialog.findViewById(R.id.topics_spinner_ok);
+        Button cancel = (Button) dialog.findViewById(R.id.topics_spinner_cancel);
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FirebaseMessaging.getInstance().subscribeToTopic(MainActivity.this.myTopic);
+
+                AlertDialog confirmDialog =new AlertDialog.Builder(MainActivity.this)
+                        //set message, title, and icon
+                        .setTitle(getResources().getString(R.string.error))
+                        .setMessage(getResources().getString(R.string.image_upload_message))
+                        .setIcon(R.drawable.ic_error)
+
+                        .setPositiveButton(getResources().getString(R.string.image_upload_ok), new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //your deleting code
+                                dialog.dismiss();
+                            }
+
+                        })
+                        .create();
+
+                confirmDialog.show();
+
+                dialog.dismiss();
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+    }
+
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
@@ -285,6 +357,14 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if(WeTradeConfig.getInstance().getSpanCount()==1){
+                WeTradeConfig.getInstance().setSpanCount(2);
+            }else{
+                WeTradeConfig.getInstance().setSpanCount(1);
+            }
+
+            mManager.setSpanCount(WeTradeConfig.getInstance().getSpanCount());
+
             return true;
         }
 
@@ -303,10 +383,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_notifications) {
 
-        } /*else if (id == R.id.nav_chat) {
-            startActivity(new Intent(this, MyChatsActivity.class));
-        }*/ else if (id == R.id.nav_config) {
+        } else if (id == R.id.nav_chat) {
+            Intent intent = new Intent(this, MyChatListActivity.class);
 
+            startActivity(intent);
+        } else if (id == R.id.nav_config) {
+            myArticlesDialogSuscription();
         } else if (id == R.id.nav_invite) {
             sendInvitation();
         } else if (id == R.id.nav_about) {
@@ -341,6 +423,7 @@ public class MainActivity extends AppCompatActivity
         builder.setMessage("Firefly development version 1.0.1");
         // Create the AlertDialog object and return it
         builder.create();
+        builder.show();
     }
 
     //TODO seed data

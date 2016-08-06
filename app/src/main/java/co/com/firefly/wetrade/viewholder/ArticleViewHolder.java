@@ -1,6 +1,7 @@
 package co.com.firefly.wetrade.viewholder;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.google.firebase.storage.StorageReference;
 
 import co.com.firefly.wetrade.ChatActivity;
 import co.com.firefly.wetrade.R;
+import co.com.firefly.wetrade.database.MyChatsContract;
+import co.com.firefly.wetrade.database.WeTradeDbHelper;
 import co.com.firefly.wetrade.model.WeTradeArticle;
 import co.com.firefly.wetrade.util.WeTradeConfig;
 
@@ -64,6 +67,19 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
                 intent.putExtra(ChatActivity.ARTICLE_UID,articleKey);
                 intent.putExtra(ChatActivity.BUYER_UID,buyerId);
                 intent.putExtra(ChatActivity.TOPIC_KEY,topicKey);
+
+                WeTradeDbHelper helper = new WeTradeDbHelper(view.getContext());
+
+                SQLiteDatabase db = helper.getWritableDatabase();
+
+                MyChatsContract myChatsContract = new MyChatsContract();
+
+                myChatsContract.setUnread(0);
+                myChatsContract.setTopic(topicKey);
+                myChatsContract.setArticle(articleKey);
+                myChatsContract.setChatUrl(buyerId);
+
+                helper.createMyChat(db, myChatsContract);
 
                 view.getContext().startActivity(intent);
 

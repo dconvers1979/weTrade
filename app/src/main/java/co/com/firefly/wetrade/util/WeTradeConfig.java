@@ -14,6 +14,7 @@ public class WeTradeConfig {
     private static WeTradeConfig ourInstance = new WeTradeConfig();
     private GoogleSignInAccount account;
     private GoogleApiClient mGoogleApiClient;
+    private int spanCount = 2;
 
     public static WeTradeConfig getInstance() {
         return ourInstance;
@@ -38,4 +39,11 @@ public class WeTradeConfig {
         this.mGoogleApiClient = mGoogleApiClient;
     }
 
+    public int getSpanCount() {
+        return spanCount;
+    }
+
+    public void setSpanCount(int spanCount) {
+        this.spanCount = spanCount;
+    }
 }
