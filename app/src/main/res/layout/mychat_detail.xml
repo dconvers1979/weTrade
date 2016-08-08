@@ -12,27 +12,32 @@
     tools:context="co.com.firefly.wetrade.MyChatDetailFragment">
 
     <com.google.android.gms.ads.AdView
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
         android:id="@+id/adView"
+        android:layout_gravity="top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id"/>
 
     <android.support.v7.widget.RecyclerView
+        android:layout_above="@+id/linearLayout"
+        android:layout_below="@+id/adView"
+        android:scrollbars="vertical"
+        android:layout_gravity="center_vertical"
+        android:foregroundGravity="center_vertical"
         android:id="@+id/messageRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/linearLayout"
-        android:layout_below="@+id/adView" />
+        android:layout_height="match_parent"/>
 
     <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="bottom|end"
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
         android:orientation="horizontal">
 
         <EditText
@@ -53,11 +58,4 @@
 
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
 </RelativeLayout>

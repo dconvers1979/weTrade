@@ -95,7 +95,7 @@ public class MyChatListActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).getTopic());
-            holder.mContentView.setText(mValues.get(position).getArticle());
+            holder.mContentView.setText(mValues.get(position).getArticleName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override

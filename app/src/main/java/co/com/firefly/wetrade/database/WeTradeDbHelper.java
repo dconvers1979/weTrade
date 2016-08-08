@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class WeTradeDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "WeTrade.db";
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
@@ -22,6 +22,7 @@ public class WeTradeDbHelper extends SQLiteOpenHelper {
                     MyChatsContract.FeedEntry.COLUMN_NAME_TOPIC + TEXT_TYPE + COMMA_SEP +
                     MyChatsContract.FeedEntry.COLUMN_NAME_ARTICLE + TEXT_TYPE + COMMA_SEP +
                     MyChatsContract.FeedEntry.COLUMN_NAME_CHATURL + TEXT_TYPE + COMMA_SEP +
+                    MyChatsContract.FeedEntry.COLUMN_NAME_ARTICLE_NAME + TEXT_TYPE + COMMA_SEP +
                     MyChatsContract.FeedEntry.COLUMN_NAME_UNREAD + TEXT_TYPE +
                     " )";
 
@@ -83,6 +84,7 @@ public class WeTradeDbHelper extends SQLiteOpenHelper {
             item.setArticle(c.getString(c.getColumnIndex(MyChatsContract.FeedEntry.COLUMN_NAME_ARTICLE)));
             item.setChatUrl(c.getString(c.getColumnIndex(MyChatsContract.FeedEntry.COLUMN_NAME_CHATURL)));
             item.setTopic(c.getString(c.getColumnIndex(MyChatsContract.FeedEntry.COLUMN_NAME_TOPIC)));
+            item.setArticleName(c.getString(c.getColumnIndex(MyChatsContract.FeedEntry.COLUMN_NAME_ARTICLE_NAME)));
             item.setUnread(c.getInt(c.getColumnIndex(MyChatsContract.FeedEntry.COLUMN_NAME_UNREAD)));
 
             response.add(item);

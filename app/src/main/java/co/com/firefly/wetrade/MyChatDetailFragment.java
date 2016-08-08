@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -70,7 +69,6 @@ public class MyChatDetailFragment extends Fragment {
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private FirebaseRecyclerAdapter<WeTradeChatMessage, MessageViewHolder> mFirebaseAdapter;
-    private ProgressBar mProgressBar;
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -131,7 +129,6 @@ public class MyChatDetailFragment extends Fragment {
 
         }
 
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mMessageRecyclerView = (RecyclerView) rootView.findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this.getContext());
         mLinearLayoutManager.setStackFromEnd(true);
@@ -145,7 +142,6 @@ public class MyChatDetailFragment extends Fragment {
 
             @Override
             protected void populateViewHolder(MessageViewHolder viewHolder, WeTradeChatMessage friendlyMessage, int position) {
-                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 viewHolder.messageTextView.setText(friendlyMessage.getText());
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
                 if (friendlyMessage.getPhotoUrl() == null) {

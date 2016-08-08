@@ -23,8 +23,8 @@
         android:name="co.com.firefly.wetrade.MyChatListFragment"
         android:layout_width="@dimen/item_width"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="co.com.firefly.wetrade.MyChatListActivity"
         tools:listitem="@layout/mychat_list_content" />

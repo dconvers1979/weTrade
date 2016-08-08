@@ -77,6 +77,7 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
                 myChatsContract.setUnread(0);
                 myChatsContract.setTopic(topicKey);
                 myChatsContract.setArticle(articleKey);
+                myChatsContract.setArticleName(article.getName());
                 myChatsContract.setChatUrl(buyerId);
 
                 helper.createMyChat(db, myChatsContract);
