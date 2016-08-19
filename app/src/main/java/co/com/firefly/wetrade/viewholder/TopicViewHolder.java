@@ -15,18 +15,21 @@ public class TopicViewHolder extends RecyclerView.ViewHolder{
 
     private TextView topicName;
     private ImageView topicImage;
+    private ImageView topicBG;
     private WeTradeTopics topic;
 
     public TopicViewHolder(View itemView){
         super(itemView);
         topicName = (TextView) itemView.findViewById(R.id.topic_name);
         topicImage = (ImageView) itemView.findViewById(R.id.topic_image);
+        topicBG = (ImageView) itemView.findViewById(R.id.topic_background);
 
     }
 
     public void bindToTopic(WeTradeTopics topic) {
         topicName.setText(topic.getTopicName());
         topicImage.setImageResource(topic.getImageSRC());
+        topicBG.setImageResource(topic.getImageBG());
     }
 
     public TextView getTopicName() {
@@ -51,5 +54,13 @@ public class TopicViewHolder extends RecyclerView.ViewHolder{
 
     public void setTopicImage(ImageView topicImage) {
         this.topicImage = topicImage;
+    }
+
+    public ImageView getTopicBG() {
+        return topicBG;
+    }
+
+    public void setTopicBG(ImageView topicBG) {
+        this.topicBG = topicBG;
     }
 }

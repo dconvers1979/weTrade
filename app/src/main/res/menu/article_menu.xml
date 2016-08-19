@@ -9,5 +9,12 @@
         android:icon="@drawable/ic_menu_chat"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/articles_menu_detail"
+        android:orderInCategory="100"
+        android:title="@string/menu_detail"
+        android:icon="@drawable/ic_menu_chat"
+        app:showAsAction="never" />
+
 
 </menu>

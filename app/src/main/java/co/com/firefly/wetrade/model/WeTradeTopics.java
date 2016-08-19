@@ -13,15 +13,17 @@ public class WeTradeTopics implements Serializable{
 
     private String topicName;
     private int imageSRC;
+    private int imageBG;
     private Map<String, WeTradeArticle> articles = new HashMap<>();
 
     public WeTradeTopics(){
 
     }
 
-    public WeTradeTopics(String topicName, int imageSRC){
+    public WeTradeTopics(String topicName, int imageSRC, int imageBG){
         this.topicName = topicName;
         this.imageSRC = imageSRC;
+        this.imageBG = imageBG;
     }
 
     @Exclude
@@ -29,7 +31,7 @@ public class WeTradeTopics implements Serializable{
         HashMap<String, Object> result = new HashMap<>();
         result.put("topicName", topicName);
         result.put("imageSRC", imageSRC);
-
+        result.put("imageBG", imageBG);
         result.put("articles", articles);
 
         return result;
@@ -57,5 +59,13 @@ public class WeTradeTopics implements Serializable{
 
     public void setArticles(Map<String, WeTradeArticle> articles) {
         this.articles = articles;
+    }
+
+    public int getImageBG() {
+        return imageBG;
+    }
+
+    public void setImageBG(int imageBG) {
+        this.imageBG = imageBG;
     }
 }

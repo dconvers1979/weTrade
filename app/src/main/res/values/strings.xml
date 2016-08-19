@@ -12,6 +12,7 @@
     <string name="menu_about">Acerca de</string>
     <string name="menu_myposts">Mis articulos</string>
     <string name="menu_chat">Chat</string>
+    <string name="menu_detail">Detalle</string>
     <string name="menu_invite">Invita</string>
     <string name="menu_signout">Cerrar sesión</string>
     <string name="menu_notifications">Mis notificaciones</string>
@@ -19,6 +20,7 @@
     <string name="banner_ad_unit_id">ca-app-pub-8615192906080517/5153080384</string>
     <string name="new_article">Crear</string>
     <string name="open_my_articles">Consultar</string>
+    <string name="subscribe_to">Suscribirse</string>
     <string name="cancel">Cancelar</string>
     <string name="mandatory_field">Campo obligatorio</string>
     <string name="buy_notification_title">NOTIFICACION</string>
@@ -44,5 +46,12 @@
     <string name="title_mychat_list">MyChats</string>
     <string name="title_mychat_detail">MyChat Detail</string>
 
+    <string name="title_activity_article_detail">ArticleDetailActivity</string>
+    <string name="notification_message_1">Hay un nuevo articulo en el tópico</string>
+    <string name="notification_message_2"> que te puede interesar !!!</string>
+
+    <string name="article_detail_price_title">Precio: </string>
+    <string name="article_detail_currency_title">Moneda: </string>
+    <string name="article_detail_shipping_title">Gastos Envio: </string>
 
 </resources>

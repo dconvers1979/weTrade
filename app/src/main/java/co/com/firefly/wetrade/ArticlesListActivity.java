@@ -251,7 +251,7 @@ public class ArticlesListActivity extends AppCompatActivity {
                         .setPositiveButton(getResources().getString(R.string.buy_notification_buy), new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                WeTradeMessageHelper.getInstance().buyNotification(newArticle);
+                                WeTradeMessageHelper.getInstance().buyNotification(newArticle, ArticlesListActivity.this.topicKey);
                                 dialog.dismiss();
                             }
 

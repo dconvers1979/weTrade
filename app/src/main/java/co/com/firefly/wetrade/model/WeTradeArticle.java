@@ -1,6 +1,10 @@
 package co.com.firefly.wetrade.model;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by toshiba on 25/07/2016.
@@ -19,6 +23,35 @@ public class WeTradeArticle implements Serializable{
 
     public WeTradeArticle(){
 
+    }
+
+    @Exclude
+    public static WeTradeArticle buildFromMap(Map values){
+        WeTradeArticle result = new WeTradeArticle();
+        result.setName(String.valueOf(values.get("name")));
+        result.setSellerId(String.valueOf(values.get("sellerId")));
+        result.setPrice(String.valueOf(values.get("price")));
+        result.setCurrency(String.valueOf(values.get("currency")));
+        result.setDescription(String.valueOf(values.get("description")));
+        result.setSendingCharges(String.valueOf(values.get("sendingCharges")));
+        result.setImageURL(String.valueOf(values.get("imageURL")));
+        result.setLocation(String.valueOf(values.get("location")));
+        return result;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("name", name);
+        result.put("sellerId", sellerId);
+        result.put("price", price);
+        result.put("currency", currency);
+        result.put("description", description);
+        result.put("sendingCharges", sendingCharges);
+        result.put("imageURL", imageURL);
+        result.put("location", location);
+
+        return result;
     }
 
     public String getName() {

@@ -1,6 +1,7 @@
 package co.com.firefly.wetrade.viewholder;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -16,9 +17,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import co.com.firefly.wetrade.ArticleDetailActivity;
 import co.com.firefly.wetrade.ChatActivity;
 import co.com.firefly.wetrade.MyArticlesChatActivity;
 import co.com.firefly.wetrade.R;
+import co.com.firefly.wetrade.database.MyChatsContract;
+import co.com.firefly.wetrade.database.WeTradeDbHelper;
 import co.com.firefly.wetrade.model.WeTradeArticle;
 
 /**
@@ -30,8 +34,6 @@ public class MyArticleViewHolder extends RecyclerView.ViewHolder{
     private TextView name;
     private TextView price;
     private TextView currency;
-    private TextView description;
-    private TextView sendingCharges;
     private ImageView articleImage;
     private Toolbar toolbar;
     private View view;
@@ -41,8 +43,6 @@ public class MyArticleViewHolder extends RecyclerView.ViewHolder{
         name = (TextView) itemView.findViewById(R.id.article_name);
         price = (TextView) itemView.findViewById(R.id.article_price);
         currency = (TextView) itemView.findViewById(R.id.article_currency);
-        description = (TextView) itemView.findViewById(R.id.article_description);
-        sendingCharges = (TextView) itemView.findViewById(R.id.article_sending_charges);
         articleImage = (ImageView) itemView.findViewById(R.id.article_image);
         toolbar = (Toolbar) itemView.findViewById(R.id.article_menu);
         view = itemView;
@@ -52,21 +52,32 @@ public class MyArticleViewHolder extends RecyclerView.ViewHolder{
         name.setText(article.getName());
         price.setText(article.getPrice());
         currency.setText(article.getCurrency());
-        description.setText(article.getDescription());
-        sendingCharges.setText(article.getSendingCharges());
 
         toolbar.inflateMenu(R.menu.article_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick(MenuItem item){
-                Intent intent = new Intent(view.getContext(), MyArticlesChatActivity.class);
 
-                intent.putExtra(MyArticlesChatActivity.ARTICLE_UID,articleKey);
-                intent.putExtra(MyArticlesChatActivity.TOPIC_KEY,topicKey);
+                int id = item.getItemId();
 
-                view.getContext().startActivity(intent);
+                if(id == R.id.articles_menu_detail){
+                    Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
+                    intent.putExtra(ArticleDetailActivity.ARTICLE_TAG, articleKey);
+                    intent.putExtra(ArticleDetailActivity.TOPIC_TAG, topicKey);
+                    intent.putExtra(ArticleDetailActivity.RENDER_CHAT_TAG, false);
+
+                    view.getContext().startActivity(intent);
+                } else if(id == R.id.articles_menu_chat){
+                    Intent intent = new Intent(view.getContext(), MyArticlesChatActivity.class);
+
+                    intent.putExtra(MyArticlesChatActivity.ARTICLE_UID,articleKey);
+                    intent.putExtra(MyArticlesChatActivity.TOPIC_KEY,topicKey);
+
+                    view.getContext().startActivity(intent);
+                }
 
                 return true;
+
             }
         });
 
@@ -133,19 +144,4 @@ public class MyArticleViewHolder extends RecyclerView.ViewHolder{
         this.currency = currency;
     }
 
-    public TextView getDescription() {
-        return description;
-    }
-
-    public void setDescription(TextView description) {
-        this.description = description;
-    }
-
-    public TextView getSendingCharges() {
-        return sendingCharges;
-    }
-
-    public void setSendingCharges(TextView sendingCharges) {
-        this.sendingCharges = sendingCharges;
-    }
 }

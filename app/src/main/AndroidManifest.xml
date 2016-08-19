@@ -60,7 +60,7 @@
         <activity
             android:name=".MyChatListActivity"
             android:label="@string/title_mychat_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MyChatDetailActivity"
             android:label="@string/title_mychat_detail"
@@ -70,6 +70,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.com.firefly.wetrade.MyChatListActivity" />
         </activity>
+        <activity
+            android:name=".ArticleDetailActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_article_detail"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".NotificationsListingActivity"></activity>
     </application>
 
 </manifest>

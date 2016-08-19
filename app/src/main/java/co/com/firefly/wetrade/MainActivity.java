@@ -1,7 +1,7 @@
 package co.com.firefly.wetrade;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -21,8 +21,6 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,13 +42,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import co.com.firefly.wetrade.model.WeTradeArticle;
 import co.com.firefly.wetrade.model.WeTradeTopics;
 import co.com.firefly.wetrade.util.WeTradeConfig;
 import co.com.firefly.wetrade.viewholder.TopicViewHolder;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_INVITE = 3333;
@@ -87,14 +84,14 @@ public class MainActivity extends AppCompatActivity
                 //TODO seed data
                 ArrayList<WeTradeTopics> topics = new ArrayList<WeTradeTopics>();
 
-                WeTradeTopics newItem1 = new WeTradeTopics("Herramientas",R.drawable.ic_tools);
-                WeTradeTopics newItem2 = new WeTradeTopics("Dispositivos",R.drawable.ic_devices);
-                WeTradeTopics newItem3 = new WeTradeTopics("Mascotas",R.drawable.ic_pets);
-                WeTradeTopics newItem4 = new WeTradeTopics("Motos",R.drawable.ic_motorcycle);
-                WeTradeTopics newItem5 = new WeTradeTopics("Juegos",R.drawable.ic_games);
-                WeTradeTopics newItem6 = new WeTradeTopics("Impresoras",R.drawable.ic_printers);
-                WeTradeTopics newItem7 = new WeTradeTopics("Oficina",R.drawable.ic_office);
-                WeTradeTopics newItem8 = new WeTradeTopics("Muebles",R.drawable.ic_furniture);
+                WeTradeTopics newItem1 = new WeTradeTopics("Herramientas",R.drawable.ic_tools, R.mipmap.ic_tools);
+                WeTradeTopics newItem2 = new WeTradeTopics("Dispositivos",R.drawable.ic_devices, R.mipmap.ic_devices);
+                WeTradeTopics newItem3 = new WeTradeTopics("Mascotas",R.drawable.ic_pets, R.mipmap.ic_pets);
+                WeTradeTopics newItem4 = new WeTradeTopics("Motos",R.drawable.ic_motorcycle, R.mipmap.ic_cars);
+                WeTradeTopics newItem5 = new WeTradeTopics("Juegos",R.drawable.ic_games, R.mipmap.ic_games);
+                WeTradeTopics newItem6 = new WeTradeTopics("Impresoras",R.drawable.ic_printers, R.mipmap.ic_printer);
+                WeTradeTopics newItem7 = new WeTradeTopics("Oficina",R.drawable.ic_office, R.mipmap.ic_office);
+                WeTradeTopics newItem8 = new WeTradeTopics("Muebles",R.drawable.ic_furniture, R.mipmap.ic_furniture);
 
                 topics.add(newItem1);
                 topics.add(newItem2);
@@ -185,6 +182,17 @@ public class MainActivity extends AppCompatActivity
         // Initialize Firebase Measurement.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        notificationCount.setText(String.valueOf(WeTradeConfig.getInstance().getNotificationCount(this)));
+
+        SharedPreferences settings = getSharedPreferences(WeTradeConfig.PREFERENCES, MODE_PRIVATE);
+
+        settings.registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+
+        notificationCount.setText(String.valueOf(WeTradeConfig.getInstance().getNotificationCount(this)));
     }
 
     public void myArticlesDialog(){
@@ -247,7 +255,7 @@ public class MainActivity extends AppCompatActivity
     public void myArticlesDialogSuscription(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setView(R.layout.menu_topics);
+        builder.setView(R.layout.menu_config);
 
         final AlertDialog dialog = builder.create();
 
@@ -282,24 +290,6 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 FirebaseMessaging.getInstance().subscribeToTopic(MainActivity.this.myTopic);
-
-                AlertDialog confirmDialog =new AlertDialog.Builder(MainActivity.this)
-                        //set message, title, and icon
-                        .setTitle(getResources().getString(R.string.error))
-                        .setMessage(getResources().getString(R.string.image_upload_message))
-                        .setIcon(R.drawable.ic_error)
-
-                        .setPositiveButton(getResources().getString(R.string.image_upload_ok), new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                //your deleting code
-                                dialog.dismiss();
-                            }
-
-                        })
-                        .create();
-
-                confirmDialog.show();
 
                 dialog.dismiss();
 
@@ -382,7 +372,9 @@ public class MainActivity extends AppCompatActivity
             myArticlesDialog();
 
         } else if (id == R.id.nav_notifications) {
+            Intent intent = new Intent(this,NotificationsListingActivity.class);
 
+            startActivity(intent);
         } else if (id == R.id.nav_chat) {
             Intent intent = new Intent(this, MyChatListActivity.class);
 

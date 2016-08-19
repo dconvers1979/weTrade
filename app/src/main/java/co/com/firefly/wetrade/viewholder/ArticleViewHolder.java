@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import co.com.firefly.wetrade.ArticleDetailActivity;
 import co.com.firefly.wetrade.ChatActivity;
 import co.com.firefly.wetrade.R;
 import co.com.firefly.wetrade.database.MyChatsContract;
@@ -34,8 +35,6 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
     private TextView name;
     private TextView price;
     private TextView currency;
-    private TextView description;
-    private TextView sendingCharges;
     private ImageView articleImage;
     private Toolbar toolbar;
     private View view;
@@ -46,8 +45,6 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
         name = (TextView) itemView.findViewById(R.id.article_name);
         price = (TextView) itemView.findViewById(R.id.article_price);
         currency = (TextView) itemView.findViewById(R.id.article_currency);
-        description = (TextView) itemView.findViewById(R.id.article_description);
-        sendingCharges = (TextView) itemView.findViewById(R.id.article_sending_charges);
         articleImage = (ImageView) itemView.findViewById(R.id.article_image);
         toolbar = (Toolbar) itemView.findViewById(R.id.article_menu);
     }
@@ -56,33 +53,43 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
         name.setText(article.getName());
         price.setText(article.getPrice());
         currency.setText(article.getCurrency());
-        description.setText(article.getDescription());
-        sendingCharges.setText(article.getSendingCharges());
         toolbar.inflateMenu(R.menu.article_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick(MenuItem item){
-                Intent intent = new Intent(view.getContext(), ChatActivity.class);
 
-                intent.putExtra(ChatActivity.ARTICLE_UID,articleKey);
-                intent.putExtra(ChatActivity.BUYER_UID,buyerId);
-                intent.putExtra(ChatActivity.TOPIC_KEY,topicKey);
+                int id = item.getItemId();
 
-                WeTradeDbHelper helper = new WeTradeDbHelper(view.getContext());
+                if(id == R.id.articles_menu_detail){
+                    Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
+                    intent.putExtra(ArticleDetailActivity.ARTICLE_TAG, articleKey);
+                    intent.putExtra(ArticleDetailActivity.TOPIC_TAG, topicKey);
+                    intent.putExtra(ArticleDetailActivity.RENDER_CHAT_TAG, true);
 
-                SQLiteDatabase db = helper.getWritableDatabase();
+                    view.getContext().startActivity(intent);
+                } else if(id == R.id.articles_menu_chat){
+                    Intent intent = new Intent(view.getContext(), ChatActivity.class);
 
-                MyChatsContract myChatsContract = new MyChatsContract();
+                    intent.putExtra(ChatActivity.ARTICLE_UID,articleKey);
+                    intent.putExtra(ChatActivity.BUYER_UID,buyerId);
+                    intent.putExtra(ChatActivity.TOPIC_KEY,topicKey);
 
-                myChatsContract.setUnread(0);
-                myChatsContract.setTopic(topicKey);
-                myChatsContract.setArticle(articleKey);
-                myChatsContract.setArticleName(article.getName());
-                myChatsContract.setChatUrl(buyerId);
+                    WeTradeDbHelper helper = new WeTradeDbHelper(view.getContext());
 
-                helper.createMyChat(db, myChatsContract);
+                    SQLiteDatabase db = helper.getWritableDatabase();
 
-                view.getContext().startActivity(intent);
+                    MyChatsContract myChatsContract = new MyChatsContract();
+
+                    myChatsContract.setUnread(0);
+                    myChatsContract.setTopic(topicKey);
+                    myChatsContract.setArticle(articleKey);
+                    myChatsContract.setArticleName(article.getName());
+                    myChatsContract.setChatUrl(buyerId);
+
+                    helper.createMyChat(db, myChatsContract);
+
+                    view.getContext().startActivity(intent);
+                }
 
                 return true;
             }
@@ -151,19 +158,4 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder{
         this.currency = currency;
     }
 
-    public TextView getDescription() {
-        return description;
-    }
-
-    public void setDescription(TextView description) {
-        this.description = description;
-    }
-
-    public TextView getSendingCharges() {
-        return sendingCharges;
-    }
-
-    public void setSendingCharges(TextView sendingCharges) {
-        this.sendingCharges = sendingCharges;
-    }
 }

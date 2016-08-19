@@ -13,6 +13,7 @@ public class MyNotificationsContract implements Serializable{
     // give it an empty constructor.
     private String topics;
     private String article;
+    private boolean newNotification;
 
     public MyNotificationsContract() {}
 
@@ -21,12 +22,19 @@ public class MyNotificationsContract implements Serializable{
         public static final String TABLE_NAME = "notifications";
         public static final String COLUMN_NAME_TOPIC = "topics";
         public static final String COLUMN_NAME_ARTICLE = "article";
+        public static final String COLUMN_NAME_NEW = "newNotification";
     }
 
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
         values.put(FeedEntry.COLUMN_NAME_TOPIC, topics);
         values.put(FeedEntry.COLUMN_NAME_ARTICLE, article);
+        if(newNotification){
+            values.put(FeedEntry.COLUMN_NAME_NEW, 1);
+        } else {
+            values.put(FeedEntry.COLUMN_NAME_NEW, 0);
+        }
+
         return values;
     }
 
@@ -44,5 +52,13 @@ public class MyNotificationsContract implements Serializable{
 
     public void setTopics(String topics) {
         this.topics = topics;
+    }
+
+    public boolean isNewNotification() {
+        return newNotification;
+    }
+
+    public void setNewNotification(boolean newNotification) {
+        this.newNotification = newNotification;
     }
 }

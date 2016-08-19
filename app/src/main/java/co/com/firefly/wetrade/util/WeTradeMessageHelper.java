@@ -9,11 +9,17 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import co.com.firefly.wetrade.model.WeTradeArticle;
 
@@ -26,6 +32,8 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
 
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
 
+    public DatabaseReference mDatabase;
+
     static final String SKU_NOTIFICATION = "send_notification";
 
     // (arbitrary) request code for the purchase flow
@@ -36,7 +44,7 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
             R.drawable.gas3, R.drawable.gas4 }; TODO */
 
     // How many units (1/4 tank is our unit) fill in the tank.
-    static final int NOTIFICATIONS_MAX = 1;
+    static final int NOTIFICATIONS_MAX = Integer.MAX_VALUE;
 
     // Current amount of gas in tank, in units
     int mTank;
@@ -48,6 +56,8 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
     IabBroadcastReceiver mBroadcastReceiver;
 
     private WeTradeArticle weTradeArticle;
+    private String topic;
+    private String payload;
 
     private static WeTradeMessageHelper ourInstance = new WeTradeMessageHelper();
 
@@ -81,6 +91,8 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
 
         fetchConfig();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //loadData();
 
@@ -213,9 +225,10 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
         }
     }
 
-    public void buyNotification(WeTradeArticle weTradeArticle) {
+    public void buyNotification(WeTradeArticle weTradeArticle, String topic) {
 
         this.weTradeArticle = weTradeArticle;
+        this.topic = topic;
         Log.d(TAG, "Buy gas button clicked.");
 
         // launch the gas purchase UI flow.
@@ -226,7 +239,7 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
         /* TODO: for security, generate your payload here for verification. See the comments on
          *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
          *        an empty string, but on a production app you should carefully generate this. */
-        String payload = "";
+        payload = UUID.randomUUID().toString();
 
         try {
             mHelper.launchPurchaseFlow(activity, SKU_NOTIFICATION, RC_REQUEST,
@@ -461,6 +474,44 @@ public class WeTradeMessageHelper implements IabBroadcastReceiver.IabBroadcastLi
 
     private void storePurchaseFirebase(){
 
+    }
+
+    public void newPurchase(){
+
+
+        mDatabase.child("purchase").child(topic).child(weTradeArticle.getSellerId()).child(payload).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+
+                        writeNewPurchase();
+
+
+                        // Finish this Activity, back to the stream
+                        //finish();
+                        // [END_EXCLUDE]
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        /*Toast.makeText(StockListingActivity.this,
+                                "getUser:onCancelled" + databaseError.toException(),
+                                Toast.LENGTH_SHORT).show();*/
+                    }
+                });
+        // [END single_value_read]
+
+    }
+
+    // [START write_fan_out]
+    public void writeNewPurchase() {
+        Map<String, Object> articleValues = weTradeArticle.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/purchase/" + this.topic + "/" + weTradeArticle.getSellerId() + "/" + payload, articleValues);
+
+        mDatabase.updateChildren(childUpdates);
     }
 
     private void registerComplainFirebase(){
